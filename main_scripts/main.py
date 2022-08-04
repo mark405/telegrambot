@@ -1,10 +1,12 @@
 from aiogram.utils import executor
 from create_bot import dp
 from handlers import client
+from sqlite_db import sql_operations
 
 
 # Printing out everytime bot starts up
 async def startup(_):
+    sql_operations.sql_start()
     print('Bot is online')
 
 # Registrating all handlers in main
