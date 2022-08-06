@@ -2,6 +2,7 @@ import sqlite3 as sq
 from aiogram import types
 
 
+# Connecting to database
 def sql_start():
     global base, cur
     base = sq.connect('testbd.db')
@@ -10,9 +11,11 @@ def sql_start():
         print('Connected to Data Base')
 
 
-async def db_search(data:dict, message:types.Message):
+# Making request basing on user's initials and year of campaign
+# Sending out all requested data
+async def db_search(data: dict, message: types.Message):
     found_data = cur.execute("SELECT specialty, rating, grade, university FROM kpi WHERE initials = ? AND year = ?;",
-                           (data['initials'], data['year'])).fetchall()
+                             (data['initials'], data['year'])).fetchall()
     if found_data:
         for ret in found_data:
             await message.reply(f'Униіерситет:\n {ret[3]}\n'
