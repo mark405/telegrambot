@@ -24,3 +24,15 @@ async def db_search(data: dict, message: types.Message):
                                 f'Балл:\n {ret[2]}\n')
     else:
         await message.reply('Ніяких даних не знайдено(\n')
+        smlr_intls = cur.execute("SELECT initials FROM kpi WHERE initials LIKE ?;",
+                                 (f"{str(data['initials'][:4])}%", )).fetchall()
+        print(smlr_intls)
+        if smlr_intls:
+            prcst_intls = []
+            for i in set(smlr_intls):
+                prcst_intls.append(
+                    str(i[0].split()[0][0].upper() + i[0].split()[0][1:] + ' ' + i[0].split()[1].upper()))
+            outp = 'Можливо, Ви мали на увазі:\n\n'
+            for ret in prcst_intls:
+                outp += str(ret + '\n')
+            await message.answer(outp)

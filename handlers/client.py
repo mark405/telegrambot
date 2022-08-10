@@ -14,7 +14,11 @@ class FSMClient(StatesGroup):
 # /start
 async def start(message: types.Message):
     await message.answer('Привіт!\n'
-                         'Я MyEntrant Bot... (To-Do)', reply_markup=kb_client)
+                         'Я MyEntrant Bot\n\n'
+                         'З моєю допомогою ти зможеш знайти своє місце у списках на вступ серед усіх ВНЗ України!\n\n'
+                         'Якщо виникли питання, звертайся сюди ...\n\n'
+                         'Для того щоб почати, натисни кпонку \"/Знайти себе\"\n'
+                         'Щоб перезавантажити бота, натисни нопку \"/Рестарт\"', reply_markup=kb_client)
 
 
 # /help
@@ -33,7 +37,7 @@ async def start_search(message: types.Message):
 # Loading initials to dict + requesting input of year
 async def load_initials(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
-        if message.text[-1] == '.' and len(message.text.split()) == 2 and message.text.split()[1][-1] == '.':
+        if message.text[-1] == '.' and len(message.text.split()) == 2 and message.text.split()[1][1] == '.':
             data['initials'] = message.text.lower().strip()
         elif message.text[-1] == '.' and len(message.text.split()) == 3 and message.text.split()[1][-1] == '.':
             data['initials'] = str(message.text.split()[0] + ' ' +
@@ -48,6 +52,9 @@ async def load_initials(message: types.Message, state: FSMContext):
                     new_msg += i
             print(new_msg.lower())
             data['initials'] = new_msg.lower().strip()
+        else:
+            data['initials'] = message.text.lower().strip()
+
     await FSMClient.next()
     await message.reply('Введіть рік вступу:')
 
