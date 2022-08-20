@@ -37,23 +37,24 @@ async def start_search(message: types.Message):
 # Loading initials to dict + requesting input of year
 async def load_initials(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
-        if message.text[-1] == '.' and len(message.text.split()) == 2 and message.text.split()[1][1] == '.':
-            data['initials'] = message.text.lower().strip()
-        elif message.text[-1] == '.' and len(message.text.split()) == 3 and message.text.split()[1][-1] == '.':
-            data['initials'] = str(message.text.split()[0] + ' ' +
-                                   (message.text.split()[1] + message.text.split()[2])).lower().strip()
-        elif len(message.text.split()) == 3 and \
-                (message.text.split()[1][-1] != '.' or message.text.split()[2][-1] != '.'):
-            new_msg = message.text.split()[0] + ' '
-            for i in message.text.split()[1:]:
-                if i[-1] != '.':
-                    new_msg += i + '.'
-                else:
-                    new_msg += i
-            print(new_msg.lower())
-            data['initials'] = new_msg.lower().strip()
-        else:
-            data['initials'] = message.text.lower().strip()
+        # if message.text[-1] == '.' and len(message.text.split()) == 2 and message.text.split()[1][1] == '.':
+        #     data['initials'] = message.text.lower().strip()
+        # elif message.text[-1] == '.' and len(message.text.split()) == 3 and message.text.split()[1][-1] == '.':
+        #     data['initials'] = str(message.text.split()[0] + ' ' +
+        #                            (message.text.split()[1] + message.text.split()[2])).lower().strip()
+        # elif len(message.text.split()) == 3 and \
+        #         (message.text.split()[1][-1] != '.' or message.text.split()[2][-1] != '.'):
+        #     new_msg = message.text.split()[0] + ' '
+        #     for i in message.text.split()[1:]:
+        #         if i[-1] != '.':
+        #             new_msg += i + '.'
+        #         else:
+        #             new_msg += i
+        #     print(new_msg.lower())
+        #     data['initials'] = new_msg.lower().strip()
+        # else:
+        #     data['initials'] = message.text.lower().strip()
+        data['initials'] = message.text.strip()
 
     await FSMClient.next()
     await message.reply('Введіть рік вступу:')
@@ -66,6 +67,7 @@ async def load_year(message: types.Message, state: FSMContext):
         data['year'] = message.text
     await db_search(dict(data), message)
     await state.finish()
+    await message.answer('Щоб знайти іншу людину, натисни кпонку \"/Знайти себе\"\n')
 
 
 # Handlers registration
