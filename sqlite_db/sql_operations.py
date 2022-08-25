@@ -44,4 +44,3 @@ async def db_search(data: dict, message: types.Message):
             for ret in prcst_intls:
                 outp += str(ret + '\n')
             await message.answer(outp)
-

@@ -1,8 +1,10 @@
 from aiogram import types, Dispatcher
 from keyboards import kb_client
+from keyboards.kb_admin import kb_admin
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from sqlite_db.sql_operations import db_search
+from adm_id.admins_ids import adm_ids
 
 
 # Class describing all states (lines that need to be entered)
@@ -13,12 +15,16 @@ class FSMClient(StatesGroup):
 
 # /start
 async def start(message: types.Message):
-    await message.answer('Привіт!\n'
-                         'Я MyEntrant Bot\n\n'
-                         'З моєю допомогою ти зможеш знайти своє місце у списках на вступ серед усіх ВНЗ України!\n\n'
-                         'Якщо виникли питання, звертайся сюди ...\n\n'
-                         'Для того щоб почати, натисни кпонку \"/Знайти себе\"\n'
-                         'Щоб перезавантажити бота, натисни нопку \"/Рестарт\"', reply_markup=kb_client)
+    uid = await get_user_id(message)
+    if uid not in adm_ids:
+        await message.answer('Привіт!\n'
+                             'Я MyEntrant Bot\n\n'
+                             'З моєю допомогою ти зможеш знайти своє місце у списках на вступ серед усіх ВНЗ України!\n\n'
+                             'Якщо виникли питання, звертайся сюди ...\n\n'
+                             'Для того щоб почати, натисни кпонку \"/Знайти себе\"\n'
+                             'Щоб перезавантажити бота, натисни нопку \"/Рестарт\"', reply_markup=kb_client)
+    else:
+        await message.answer('Hello admin', reply_markup=kb_admin)
 
 
 # /help
@@ -70,6 +76,10 @@ async def load_year(message: types.Message, state: FSMContext):
     await message.answer('Щоб знайти іншу людину, натисни кпонку \"/Знайти себе\"\n')
 
 
+async def get_user_id(message:types.Message):
+    return message.from_user.id
+
+
 # Handlers registration
 def reg_handlers_client(dp: Dispatcher):
     dp.register_message_handler(start, commands=['start', 'Рестарт'])
@@ -77,3 +87,4 @@ def reg_handlers_client(dp: Dispatcher):
     dp.register_message_handler(start_search, commands=['ЗнайтиCебе'], state=None)
     dp.register_message_handler(load_initials, state=FSMClient.initials)
     dp.register_message_handler(load_year, state=FSMClient.year)
+    dp.register_message_handler(get_user_id)

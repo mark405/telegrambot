@@ -1,6 +1,6 @@
 from aiogram.utils import executor
 from create_bot import dp
-from handlers import client
+from handlers import client, admin
 from sqlite_db import sql_operations
 
 
@@ -10,6 +10,7 @@ async def startup(_):
     print('Bot is online')
 
 # Registration of all handlers in main
+admin.reg_handlers_admin(dp)
 client.reg_handlers_client(dp)
 
 executor.start_polling(dispatcher=dp, skip_updates=True, on_startup=startup)
