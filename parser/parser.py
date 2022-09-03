@@ -3,8 +3,8 @@ import json
 import sqlite3 as sq
 
 
-async def refill():
-    base = sq.connect('../main_scripts/test2.db')
+async def refill(end_code:list):
+    base = sq.connect('entrants.db')
     cur = base.cursor()
     cur.execute("DROP TABLE IF EXISTS TWO_New")
     cur.execute("CREATE TABLE IF NOT EXISTS TWO_New ("
@@ -21,15 +21,13 @@ async def refill():
                 "PROGRAM        TEXT    NOT NULL,"
                 "YEAR           INT     NOT NULL);")
 
-    for i in range(281211, 281220):
+    for i in range(276820, 344430):
         try:
             url = urlopen("https://abit-help.com.ua/api/speciality/" + str(i))
 
             data = json.loads(url.read())
             if len(data['entrants']) < 1:
-                print(f'SKIP {i}')
                 continue
-            print(i)
 
             specialityNumber = data["specialityNumber"]
 
@@ -42,7 +40,7 @@ async def refill():
                     lst_data[k] = 'Невідомо'
 
             for j in range(0, len(data['entrants'])):
-                name = data["entrants"][j]["name"].lower()
+                name = data["entrants"][j]["name"]
                 status = data["entrants"][j]["status"]
                 number = data["entrants"][j]["number"]
                 prioity = data["entrants"][j]["prioity"]
@@ -60,3 +58,5 @@ async def refill():
     cur.execute("DROP TABLE IF EXISTS TWO;")
     cur.execute("CREATE TABLE TWO AS SELECT * FROM TWO_New;")
     cur.execute("DROP TABLE TWO_New;")
+    cur.close()
+    end_code.append(1)
